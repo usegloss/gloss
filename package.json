@@ -1,6 +1,6 @@
 {
   "name": "fancy-example",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An advanced example using Chemical components.",
   "main": "index.js",
   "type": "module",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/chemicaljs/fancy-example#readme",
   "dependencies": {
-    "chemicaljs": "^1.7.3",
-    "express": "^4.19.2"
+    "chemicaljs": "^2.6.4",
+    "express": "^4.21.2"
   }
 }
