@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gloss - Browser</title>
+  <link rel="stylesheet" href="/_gloss/css/tw.opt.css">
+  <link rel="stylesheet" href="/_gloss/css/app.css">
+  <link rel="stylesheet" href="/_gloss/css/browser.css">
+  <link
+  rel="stylesheet"
+  href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css"
+>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+  <script src="/chemical.js"></script>
+  <script src="/chemical.components.js"></script>
+  
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 overflow-x-hidden flex flex-col">
+  <div class="fixed inset-0 -z-10 animate-fadeIn">
+    <div class="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-indigo-900/10 blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/3 w-96 h-96 rounded-full bg-purple-900/10 blur-3xl"></div>
+  </div>
+  
+  <header id="navbar" class="navbar animate-fadeIn delay-1">
+    <nav class="mx-auto px-16 py-2 flex items-center justify-between shadow-lg w-full relative">
+      <div class="flex items-center">
+        <div class="logo-gradient mr-4"></div>
+      </div>
+      
+      <div class="flex items-center space-x-3 mr-4">
+        <button onclick="chemical.componentAction('back', 'web')" class="nav-control p-2 rounded-full hover:bg-white/5">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <button onclick="chemical.componentAction('forward', 'web')" class="nav-control p-2 rounded-full hover:bg-white/5">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <button onclick="chemical.componentAction('reload', 'web')" class="nav-control p-2 rounded-full hover:bg-white/5">
+          <i class="fas fa-redo"></i>
+        </button>
+      </div>
+      
+      <div class="url-container mx-auto">
+        <i class="url-icon fab fa-duck gradient-text"></i>
+        <input is="chemical-input" spellcheck="false" autocomplete="off" id="search" data-frame="web" data-auto-https data-search-engine="https://duckduckgo.com/?t=h_&q=%s" type="text" class="url-bar w-full" placeholder="Search anything or enter URL..." value="https://example.com">
+      </div>
+      
+      <div class="flex items-center space-x-4 ml-4">
+        <a href="/" class="nav-item text-gray-300 hover:text-white">
+          <i class="fas fa-home"></i>Home
+        </a>
+        <a href="/explore" class="nav-item text-gray-300 hover:text-white">
+          <i class="fas fa-compass"></i>Explore
+        </a>
+        <a href="/settings" class="nav-item text-gray-300 hover:text-white">
+          <i class="fas fa-gear"></i>Settings
+        </a>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10">
+          <i class="fas fa-user text-xs gradient-text"></i>
+        </button>
+      </div>
+      
+      <div id="toggleNav" class="toggle-nav">
+        <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+      </div>
+    </nav>
+  </header>
+  
+  <main class="flex-grow">
+    <div id="iframeContainer" class="iframe-container w-full h-full">
+    <div style="padding-top: 1rem; padding-bottom: 1rem; box-sizing: border-box;" class="h-full px-16">
+      <iframe autofocus id="web" data-controls="controls" is="chemical-iframe" src="" class="w-full h-full border-none" style="border-radius: 12px;"></iframe>
+    </div>
+    </div>
+  </main>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const navbar = document.getElementById('navbar');
+    const toggleNav = document.getElementById('toggleNav');
+    const iframeContainer = document.getElementById('iframeContainer');
+    const iframe = document.getElementById('web');
+    const searchInput = document.getElementById('search');
+    const urlIcon = document.querySelector('.url-icon');
+
+    function getEngineFromStorage() {
+      const saved = localStorage.getItem('gloss_engine');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {}
+      }
+      return { name: 'DuckDuckGo', icon: 'fas fa-duck', url: 'https://duckduckgo.com/?t=h_&q=%s' };
+    }
+
+    function setEngine(engine) {
+      if (!engine) return;
+      if (urlIcon) {
+        urlIcon.className = 'url-icon';
+        if (engine.icon.includes(' ')) {
+          engine.icon.split(' ').forEach(cls => {
+            if (cls.trim()) urlIcon.classList.add(cls.trim());
+          });
+        } else {
+          urlIcon.classList.add(engine.icon);
+        }
+        urlIcon.classList.add('gradient-text');
+      }
+      if (searchInput) {
+        searchInput.setAttribute('data-search-engine', engine.url);
+      }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let engine;
+    if (urlParams.get('engine')) {
+      try {
+        engine = JSON.parse(atob(urlParams.get('engine')));
+        localStorage.setItem('gloss_engine', JSON.stringify(engine));
+      } catch {
+        engine = getEngineFromStorage();
+      }
+    } else {
+      engine = getEngineFromStorage();
+    }
+    setEngine(engine);
+    
+    let isNavbarHidden = false;
+    let isHovering = false;
+    
+    toggleNav.addEventListener('click', () => {
+      isNavbarHidden = !isNavbarHidden;
+      toggleNav.classList.toggle('toggle-nav-rotate');
+      
+      if (isNavbarHidden) {
+        navbar.classList.add('navbar-hidden');
+        iframeContainer.classList.add('expanded');
+      } else {
+        navbar.classList.remove('navbar-hidden');
+        navbar.classList.remove('navbar-peek');
+        iframeContainer.classList.remove('expanded');
+      }
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (isNavbarHidden && e.clientY < 10) {
+        navbar.classList.remove('navbar-hidden');
+        navbar.classList.add('navbar-peek');
+        isHovering = true;
+      } else if (isNavbarHidden && e.clientY > 50 && isHovering) {
+        navbar.classList.remove('navbar-peek');
+        navbar.classList.add('navbar-hidden');
+        isHovering = false;
+      }
+    });
+    
+    navbar.addEventListener('click', () => {
+      if (isNavbarHidden && navbar.classList.contains('navbar-peek')) {
+        isNavbarHidden = false;
+        navbar.classList.remove('navbar-peek');
+        navbar.classList.remove('navbar-hidden');
+        toggleNav.classList.remove('toggle-nav-rotate');
+        iframeContainer.classList.remove('expanded');
+      }
+    });
+
+    searchInput.addEventListener('blur', () => {
+      iframe.focus();
+    });
+
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        iframe.focus();
+      }
+    });
+
+    searchInput.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+    document.addEventListener('click', (event) => {
+      if (!searchInput.contains(event.target)) {
+        iframe.focus();
+      }
+    });
+    window.addEventListener("chemicalLoaded", async function(e) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const query = urlParams.get('q');
+      if (query) {
+        const decodedQuery = atob(query);
+        searchInput.value = decodedQuery;
+        const searchUrl = engine && engine.url ? engine.url : 'https://duckduckgo.com/?t=h_&q=%s';
+        const encodedUrl = await chemical.encode(decodedQuery, {
+          service: "uv",
+          autoHttps: true,
+          searchEngine: searchUrl
+        });
+        document.getElementById("web").setAttribute("src", encodedUrl);
+        document.getElementById("web").style.display = "block";
+      }
+    });
+  });
+  </script>
+</body>
+</html>

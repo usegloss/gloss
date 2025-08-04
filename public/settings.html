@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gloss</title>
+  <link rel="stylesheet" href="/_gloss/css/tw.opt.css">
+  <link rel="stylesheet" href="/_gloss/css/app.css">
+  <script src="_gloss/js/features.js"></script>
+  
+      <link
+        rel="stylesheet"
+        href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css"
+      >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+</head>
+<body class="gradient-bg min-h-screen text-gray-100 overflow-x-hidden flex flex-col">
+  <div class="fixed inset-0 -z-10 animate-fadeIn">
+    <div class="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-indigo-900/10 blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/3 w-96 h-96 rounded-full bg-purple-900/10 blur-3xl"></div>
+  </div>
+  <header class="fixed top-0 left-0 right-0 z-50 animate-fadeIn delay-1 flex justify-center">
+    <nav class="glass mx-auto my-3 px-4 py-2 flex items-center justify-between shadow-lg rounded-full w-auto max-w-xl">
+      <div class="flex items-center mr-12">
+        <div class="logo-gradient"></div>
+      </div>
+      
+      <div class="flex items-center space-x-4 mx-auto">
+        <a href="/" class="nav-item text-gray-300 hover:text-white">
+          <i class="fas fa-home"></i>Home
+        </a>
+        <a href="/explore" class="nav-item text-gray-300 hover:text-white">
+          <i class="fas fa-compass"></i>Explore
+        </a>
+        <a href="/settings" class="nav-item text-gray-300 hover:text-white">
+          <i class="fas fa-gear"></i>Settings
+        </a>
+      </div>
+      <div class="ml-12">
+        <button onclick="verifyAppStateIntegrity();" class="w-6 h-6 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity">
+          <i class="fas fa-info text-xs gradient-text"></i>
+        </button>
+      </div>
+    </nav>
+  </header>
+  <main class="flex flex-col items-center justify-center flex-grow px-4">
+    <div class="text-center mb-8 animate-fadeUp delay-2">
+      <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-400 to-purple-400 text-transparent bg-clip-text">Settings</h1>
+      <p class="text-gray-400 max-w-md mx-auto text-sm">Configure your Gloss experience</p>
+    </div>
+    
+    <div class="w-full max-w-2xl animate-fadeUp delay-3">
+      <div class="glass rounded-2xl p-8 shadow-lg">
+        <div class="space-y-6">
+          
+          <div class="setting-item border-b border-white/10 pb-6">
+            <h3 class="text-lg font-semibold text-white mb-2">Storage Management</h3>
+            <p class="text-gray-400 text-sm mb-4">Clear all saved data including categories, apps, and preferences</p>
+            <button id="clearStorageBtn" class="glass px-6 py-3 rounded-xl text-white font-medium cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-red-400/30 flex items-center gap-2">
+              <i class="fas fa-trash"></i>
+              Clear Local Storage
+            </button>
+          </div>
+
+          <div class="setting-item">
+            <h3 class="text-lg font-semibold text-white mb-2">About</h3>
+            <p class="text-gray-400 text-sm">Gloss - A sleek, modern web proxy</p>
+            <p class="text-gray-500 text-xs mt-2">Version 1.0</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="w-full py-4 text-center animate-fadeIn delay-4">
+    <p class="text-gray-500 text-xs" data-mark>© 2025 Gloss. All rights reserved.</p>
+  </footer>
+
+  <script src="_gloss/js/home.js"></script>
+  <script>
+    function clearAllLocalStorage() {
+      if (confirm('Are you sure you want to clear all saved data? This will remove all custom categories, apps, and settings. This action cannot be undone.')) {
+        try {
+          localStorage.clear();
+          alert('All local storage data has been cleared successfully!');
+          
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+        } catch (error) {
+          alert('Failed to clear local storage: ' + error.message);
+        }
+      }
+    }
+
+    document.getElementById('clearStorageBtn').addEventListener('click', clearAllLocalStorage);
+  </script>
+</body>
+</html>
